@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        p {text-align: center;}
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        table th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th:first-child, table td:first-child {
+            width: 25%;
+        }
+
+        table th:nth-child(2), table td:nth-child(2) {
+            width: 30%;
+        }
+
+        table th:last-child, table td:last-child {
+            width: 15%;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levelhead Records</title>
+</head>
+<body>
+    <h1>Levelhead Time Records</h1>
+    <p>Records arranged in descending order by date starting from the most recent. More details can be found with Radio_Inactive's <a href="https://level-kit.netlify.app/recordviewer/">Record Viewer</a>.</p>
+    <p><button type="button" onClick="window.location.reload();">Refresh</button></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Level Title</th>
+                <th>Level Creator</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="recordsTableBody">
+            <!-- Records will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        // Function to format time
+        function formatTime(value) {
+            const seconds = Math.round(value * 100) / 100;
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            const formattedTime = remainingSeconds.toFixed(2) + 's';
+
+            if (minutes > 0) {
+                return minutes + 'm ' + formattedTime;
+            } else {
+                return formattedTime;
+            }
+        }
+
+        // Function to fetch level data
+        function fetchLevelData(levelId) {
+            const levelUrl = `https://www.bscotch.net/api/levelhead/levels?limit=1&levelIds=${levelId}&includeAliases=true`;
+            return fetch(levelUrl).then(response => response.json());
+        }
+
+        // Function to populate the table
+        function populateTable(records) {
+            const recordsTableBody = document.getElementById('recordsTableBody');
+
+            records.data.forEach(async record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
+                    <td>Loading...</td>
+                    <td>Loading...</td>
+                    <td>${formatTime(record.value)}</td>
+                `;
+                recordsTableBody.appendChild(row);
+
+                const levelData = await fetchLevelData(record.levelId);
+                if (levelData.data.length > 0) {
+                    const levelInfo = levelData.data[0];
+                    const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
+                    row.cells[1].innerHTML = levelTitle;
+                    row.cells[2].textContent = levelInfo.alias ? levelInfo.alias.alias : '';
+                }
+            });
+        }
+
+        // Fetch Levelhead records
+        const apiUrl = 'https://www.bscotch.net/api/levelhead/recent-records/FastestTime?limit=128&includeAliases=true';
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(populateTable)
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    </script>
+</body>
+</html>
