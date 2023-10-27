@@ -75,7 +75,6 @@
             <!-- Records will be added here dynamically -->
         </tbody>
     </table>
-
     <script>
         // Function to format time
         function formatTime(value) {
@@ -91,45 +90,45 @@
             }
         }
 
-        // Function to fetch level data
-        function fetchLevelData(levelId) {
-            const levelUrl = `https://www.bscotch.net/api/levelhead/levels?limit=1&levelIds=${levelId}&includeAliases=true`;
-            return fetch(levelUrl).then(response => response.json());
-        }
+        // Function to populate the table with level details
+async function populateTable(records) {
+    const recordsTableBody = document.getElementById('recordsTableBody');
+    const levelIds = records.data.map(record => record.levelId);
 
-        // Function to populate the table
-        function populateTable(records) {
-            const recordsTableBody = document.getElementById('recordsTableBody');
+    // Split level IDs into batches of 16 for more efficient API calls
+    for (let i = 0; i < levelIds.length; i += 16) {
+        const batchLevelIds = levelIds.slice(i, i + 16);
+        const levelUrl = `https://www.bscotch.net/api/levelhead/levels?limit=${batchLevelIds.length}&levelIds=${batchLevelIds.join(',')}&includeAliases=true`;
 
-            records.data.forEach(async record => {
+        const levelData = await fetch(levelUrl).then(response => response.json());
+
+        for (const record of records.data) {
+            const levelInfo = levelData.data.find(data => data.levelId === record.levelId);
+
+            if (levelInfo) {
                 const row = document.createElement('tr');
+                const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
                 row.innerHTML = `
                     <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
-                    <td>Loading...</td>
-                    <td>Loading...</td>
+                    <td>${levelTitle}</td>
+                    <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
                     <td>${formatTime(record.value)}</td>
                 `;
                 recordsTableBody.appendChild(row);
-
-                const levelData = await fetchLevelData(record.levelId);
-                if (levelData.data.length > 0) {
-                    const levelInfo = levelData.data[0];
-                    const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
-                    row.cells[1].innerHTML = levelTitle;
-                    row.cells[2].textContent = levelInfo.alias ? levelInfo.alias.alias : '';
-                }
-            });
+            }
         }
+    }
+}
 
-        // Fetch Levelhead records
-        const apiUrl = 'https://www.bscotch.net/api/levelhead/recent-records/FastestTime?limit=128&includeAliases=true';
+// Fetch Levelhead records
+const apiUrl = 'https://www.bscotch.net/api/levelhead/recent-records/FastestTime?limit=128&includeAliases=true';
 
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(populateTable)
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+fetch(apiUrl)
+    .then(response => response.json())
+    .then(populateTable)
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
     </script>
 </body>
 </html>
