@@ -57,11 +57,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Levelhead Records</title>
+    <link rel="icon" type="image/x-icon" href="https://img.bscotch.net/eyJidWNrZXQiOiJydW1wdXMtaW1hZ2VzIiwia2V5IjoibGV2ZWxoZWFkL3Nob2UucG5nIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNCwiaGVpZ2h0IjoyNCwiZml0IjoiY29udGFpbiIsImJhY2tncm91bmQiOiIjMDAwMDAwMDAiLCJwb3NpdGlvbiI6ImNlbnRlciJ9fX0=">
 </head>
 <body>
     <h1>Recent Levelhead Time Records</h1>
     <p>Records arranged in descending order by date (starting from the most recent). Inspired by Radio_Inactive's <a href="https://level-kit.netlify.app/recordviewer/">Record Viewer</a>.</p>
     <p><button type="button" onClick="window.location.reload();">Refresh</button></p>
+    <p><label for="userFilter">Filter by player:</label>
+        <input type="text" id="userFilter" placeholder="Enter Player IDs (comma-separated)">
+        <button type="button" onClick="fetchRecordsByUser();">Apply Filter</button>
+    </p>
     <table>
         <thead>
             <tr>
@@ -122,6 +127,23 @@ async function populateTable(records) {
 
 // Fetch Levelhead records
 const apiUrl = 'https://www.bscotch.net/api/levelhead/recent-records/FastestTime?limit=128&includeAliases=true';
+
+// Function to fetch records by User ID
+function fetchRecordsByUser() {
+            const userFilter = document.getElementById('userFilter').value;
+            const recordsTableBody = document.getElementById('recordsTableBody');
+            recordsTableBody.innerHTML = ''; // Clear the table body
+
+            // Create a new API URL with the User ID parameter
+            const apiUrlByUser = `${apiUrl}&userIds=${userFilter}`;
+
+            fetch(apiUrlByUser) // Use the new API URL
+                .then(response => response.json())
+                .then(populateTable)
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
 
 fetch(apiUrl)
     .then(response => response.json())
