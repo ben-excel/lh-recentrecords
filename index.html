@@ -57,7 +57,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Levelhead Records</title>
+    <title>LH Records</title>
     <link rel="icon" type="image/x-icon" href="https://img.bscotch.net/eyJidWNrZXQiOiJydW1wdXMtaW1hZ2VzIiwia2V5IjoibGV2ZWxoZWFkL3Nob2UucG5nIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoyNCwiaGVpZ2h0IjoyNCwiZml0IjoiY29udGFpbiIsImJhY2tncm91bmQiOiIjMDAwMDAwMDAiLCJwb3NpdGlvbiI6ImNlbnRlciJ9fX0=">
 </head>
 <body>
@@ -97,10 +97,11 @@
             }
         }
 
-        // Function to populate the table with level details
+// Function to populate the table with level details
 async function populateTable(records) {
     const recordsTableBody = document.getElementById('recordsTableBody');
     const levelIds = records.data.map(record => record.levelId);
+    const uniqueRecords = {}; // Use an object to store unique records
 
     // Split level IDs into batches of 16 for more efficient API calls
     for (let i = 0; i < levelIds.length; i += 16) {
@@ -113,15 +114,24 @@ async function populateTable(records) {
             const levelInfo = levelData.data.find(data => data.levelId === record.levelId);
 
             if (levelInfo) {
-                const row = document.createElement('tr');
-                const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
-                row.innerHTML = `
-                    <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
-                    <td>${levelTitle}</td>
-                    <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
-                    <td>${formatTime(record.value)}</td>
-                `;
-                recordsTableBody.appendChild(row);
+                // Create a unique key based on User ID, Level ID, and record type
+                const uniqueKey = `${record.userId}-${record.levelId}`;
+                //console.log(uniqueKey);
+                // Check if this record is unique, and if so, add it to the table
+                if (!uniqueRecords[uniqueKey]) {
+                    const row = document.createElement('tr');
+                    const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
+                    row.innerHTML = `
+                        <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
+                        <td>${levelTitle}</td>
+                        <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
+                        <td>${formatTime(record.value)}</td>
+                    `;
+                    recordsTableBody.appendChild(row);
+
+                    // Mark this record as added to avoid duplicates
+                    uniqueRecords[uniqueKey] = true;
+                }
             }
         }
     }
