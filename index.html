@@ -115,7 +115,7 @@ async function populateTable(records) {
 
             if (levelInfo) {
                 // Create a unique key based on User ID, Level ID, and record type
-                const uniqueKey = `${record.userId}-${record.levelId}`;
+                const uniqueKey = `${record.userId}-${record.levelId}-${record.value}`;
                 //console.log(uniqueKey);
                 // Check if this record is unique, and if so, add it to the table
                 if (!uniqueRecords[uniqueKey]) {
