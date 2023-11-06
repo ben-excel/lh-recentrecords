@@ -22,7 +22,7 @@
         }
 
         table th {
-            background-color: #3498db;
+            background-color: #008000;
             color: #fff;
             white-space: nowrap;
         }
@@ -62,7 +62,7 @@
 </head>
 <body>
     <h1>Recent Levelhead Time Records</h1>
-    <p>Records on all levels arranged in descending order by date (starting from the most recent).</p>
+    <p>Records set on all levels, arranged in descending order by date.</p>
     <p>Records are stored in the API for 6 months. <button type="button" onClick="window.location.reload();">Refresh page</button></p>
     <p>Inspired by <a href="https://levelhead.io/@fck11l">Radio inactive</a>'s <a href="https://level-kit.netlify.app/recordviewer/">Record Viewer</a>.</p>
     <p><label for="userFilter">Filter by player(s):</label>
@@ -72,6 +72,7 @@
     <table>
         <thead>
             <tr>
+                <th>Updated</th>
                 <th>Player</th>
                 <th>Level Title</th>
                 <th>Level Creator</th>
@@ -122,6 +123,7 @@ async function populateTable(records) {
                     const row = document.createElement('tr');
                     const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
                     row.innerHTML = `
+                        <td>${new Date(record.updatedAt).toLocaleString()}</td>
                         <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
                         <td>${levelTitle}</td>
                         <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
@@ -135,6 +137,16 @@ async function populateTable(records) {
             }
         }
     }
+
+    // Sort the table by "Last Updated" in descending order (most recent first)
+    const rows = Array.from(recordsTableBody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+        const dateA = new Date(a.cells[0].textContent);
+        const dateB = new Date(b.cells[0].textContent);
+        return dateB - dateA;
+    });
+
+    rows.forEach(row => recordsTableBody.appendChild(row));
 }
 
 // Fetch Levelhead records
