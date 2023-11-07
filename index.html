@@ -72,11 +72,11 @@
     <table>
         <thead>
             <tr>
-                <th>Updated</th>
                 <th>Player</th>
                 <th>Level Title</th>
                 <th>Level Creator</th>
                 <th>Fastest Time</th>
+                <th>Updated</th>
             </tr>
         </thead>
         <tbody id="recordsTableBody">
@@ -123,11 +123,11 @@ async function populateTable(records) {
                     const row = document.createElement('tr');
                     const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
                     row.innerHTML = `
-                        <td>${new Date(record.updatedAt).toLocaleString()}</td>
                         <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
                         <td>${levelTitle}</td>
                         <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
                         <td>${formatTime(record.value)}</td>
+                        <td>${new Date(record.updatedAt).toLocaleString()}</td>
                     `;
                     recordsTableBody.appendChild(row);
 
