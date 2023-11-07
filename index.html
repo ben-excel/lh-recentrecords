@@ -32,6 +32,10 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
+        td.level-info {
+            background-color: #FAF9F6; /* Grey background for Level Title and Level Creator */
+        }
         /*
         table th:first-child, table td:first-child {
             width: 15%;
@@ -128,8 +132,8 @@ async function populateTable(records) {
                     const levelTitle = `${levelInfo.title} (<a href="https://levelhead.io/+${record.levelId}" target="_blank">${record.levelId}</a>)`;
                     row.innerHTML = `
                         <td>${record.alias ? record.alias.alias : ''} (<a href="https://levelhead.io/@${record.userId}" target="_blank">${record.userId}</a>)</td>
-                        <td>${levelTitle}</td>
-                        <td>${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
+                        <td class="level-info">${levelTitle}</td>
+                        <td class="level-info">${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
                         <td>${formatTime(record.value)}</td>
                         <td>${new Date(record.updatedAt).toLocaleString()}</td>
                     `;
