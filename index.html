@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html> -->
 <html lang="en">
     <style>
         body {
@@ -36,22 +36,6 @@
         td.level-info {
             background-color: #FAF9F6; /* Grey background for Level Title and Level Creator */
         }
-        /*
-        table th:first-child, table td:first-child {
-            width: 15%;
-        }
-
-        table th:nth-child(2), table td:nth-child(2) {
-            width: 25%;
-        }
-
-        table th:nth-child(3), table td:nth-child(3) {
-            width: 25%;
-        }
-
-        table th:last-child, table td:last-child {
-            width: 15%;
-        }*/
 
         a {
             text-decoration: none;
@@ -106,6 +90,8 @@
             }
         }
 
+const uniquePlayers = new Set();
+
 // Function to populate the table with level details
 async function populateTable(records) {
     const recordsTableBody = document.getElementById('recordsTableBody');
@@ -141,6 +127,9 @@ async function populateTable(records) {
 
                     // Mark this record as added to avoid duplicates
                     uniqueRecords[uniqueKey] = true;
+
+                    // Add the player ID to the Set
+                    uniquePlayers.add(record.userId);
                 }
             }
         }
@@ -155,6 +144,18 @@ async function populateTable(records) {
     });
 
     rows.forEach(row => recordsTableBody.appendChild(row));
+    
+    // Get the count of unique players
+    const uniquePlayerCount = uniquePlayers.size;
+    console.log('Unique Players:', uniquePlayerCount);
+    /*
+    // Create a div element to display the count
+    const playerCountDiv = document.createElement('div');
+    playerCountDiv.textContent = `Unique Players: ${uniquePlayerCount}`;
+
+    // Append the player count div after the table
+    document.body.appendChild(playerCountDiv);
+    */
 }
 
 // Fetch Levelhead records
