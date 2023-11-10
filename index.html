@@ -137,11 +137,11 @@ async function populateTable(records) {
     // Sort the table by "Last Updated" in descending order (most recent first)
     const rows = Array.from(recordsTableBody.querySelectorAll('tr'));
     rows.sort((a, b) => {
-        const dateA = new Date(a.cells[0].textContent);
-        const dateB = new Date(b.cells[0].textContent);
+        const dateA = new Date(a.cells[4].textContent);
+        const dateB = new Date(b.cells[4].textContent);
         return dateB - dateA;
     });
-
+    
     rows.forEach(row => recordsTableBody.appendChild(row));
     
     // Get the count of unique players
