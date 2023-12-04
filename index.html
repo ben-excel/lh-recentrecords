@@ -75,7 +75,7 @@
         </tbody>
     </table>
     <script>
-        // Function to format time
+        // Function to format time into minutes and seconds
         function formatTime(value) {
             const seconds = Math.round(value * 100) / 100;
             const minutes = Math.floor(seconds / 60);
@@ -150,7 +150,6 @@ async function populateTable(records) {
     const totalUniqueRecords = Object.keys(uniqueRecords).length;
     
     console.log('Unique players:', uniquePlayerCount);
-
     console.log('Records displayed:', totalUniqueRecords);
 }
 
