@@ -120,7 +120,7 @@ async function populateTable(records) {
                         <td class="level-info">${levelTitle}</td>
                         <td class="level-info">${levelInfo.alias ? levelInfo.alias.alias : ''}</td>
                         <td>${formatTime(record.value)}</td>
-                        <td>${new Date(record.updatedAt).toLocaleString()}</td>
+                        <td><nobr>${new Date(record.updatedAt).toLocaleString()}</nobr></td>
                     `;
                     recordsTableBody.appendChild(row);
 
